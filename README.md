@@ -3,4 +3,4 @@ A bash script to search for books in shadow library
 
 ## Example:
 
-![GitHub Logo](/example2.png)
+![GitHub Logo](/Example2.png)
