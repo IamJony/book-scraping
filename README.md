@@ -1,5 +1,5 @@
 # book-scraping
-A bash script to search for books in shadow library
+A Bash script to search and download books using shadows libraries
 
 ## Example:
 ![ecampl](https://raw.githubusercontent.com/IamJony/semi-nord-theme-bluefish/main/Screenshot_2023-05-09-03-06-23_1366x768.png)
