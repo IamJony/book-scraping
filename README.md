@@ -1,5 +1,9 @@
 # book-scraping
 A Bash script to search and download books using shadows libraries
+## Dependencies
+1. fzf
+2. wget
+3. curl
 
 ## Example:
 ![ecampl](https://raw.githubusercontent.com/IamJony/semi-nord-theme-bluefish/main/Screenshot_2023-05-09-03-06-23_1366x768.png)
