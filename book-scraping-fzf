@@ -184,7 +184,7 @@ echo "$onionlink"
 echo -e $White''
 
 # Downloads directory  
-dirdownload='~/Documents'
+dirdownload=~/Documents
 
 
 readarray -t urls < $dir/.donwload_link
@@ -197,8 +197,8 @@ do
         wget -nc -P "$dir/" "$url"
         if [ $? -eq 0 ]; then
             echo -e $BGreen'Download finished: '$dirdownload'/'$namedocument'.'$extension''
-            mv $dir/*."$extension" ~/Documents/
-           cd ~/Documents/ && mv $filename "$namedocument"."$extension"
+            mv $dir/*."$extension" $dirdownload/
+           cd $dirdownload/ && mv $filename "$namedocument"."$extension"
            
             break
         fi
