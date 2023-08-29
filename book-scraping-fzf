@@ -3,10 +3,10 @@
 # Created by IamJony
 # My github: https://github.com/IamJony
 # DESCRIPTION: A Bash script to download books using libraries shadows
-# Date: 2023-07-30 
-# Version: 1.1
+# Date: 2023-08-29 
+# Version: 1.2
 
-version_number="1.1"
+version_number="1.2"
 
 # Local version
 version_info() {
@@ -177,6 +177,13 @@ echo -e ''
 echo -e $BYellow'If the download doesnt start automatically, you can open this link in your browser'
 echo -e $BRed''
 echo "$libgenlink"
+echo -e ''
+echo -e $BYellow'If the download doesnt start automatically, copy this command to download the book directly in the terminal'
+echo -e $BRed''
+comandoo=$(curl -s "$libgenlink" | sed -n 's/.*<a href="get.php\([^"]*\)".*/http:\/\/libgen.li\/get.php\1/p' 2>/dev/null)
+echo -e "wget \"$comandoo\""
+
+
 echo -e ''
 echo -e $BYellow'Onion link'
 echo -e $BRed''
