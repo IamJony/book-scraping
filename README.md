@@ -5,6 +5,9 @@ A Bash script to search and download books using shadows libraries
 2. wget
 3. curl
 
+## Update script 
+./book-scraping-fzf --update
+
 ## Example:
 ![ecampl](https://raw.githubusercontent.com/IamJony/semi-nord-theme-bluefish/main/Screenshot_2023-05-09-03-06-23_1366x768.png)
 ![example](https://raw.githubusercontent.com/IamJony/semi-nord-theme-bluefish/db8ea9eaca408fc5625b27db9f03375516472198/Screenshot_2023-05-09-03-06-29_1366x768.png)
