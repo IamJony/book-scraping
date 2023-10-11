@@ -3,10 +3,10 @@
 # Created by IamJony
 # My github: https://github.com/IamJony
 # DESCRIPTION: A Bash script to download books using libraries shadows
-# Date: 2023-08-29 
-# Version: 1.2
+# Date: 2023-10-11 
+# Version: 1.3
 
-version_number="1.2"
+version_number="1.3"
 
 # Local version
 version_info() {
@@ -71,6 +71,7 @@ mkdir $dir/ 2>/dev/null &
 
 # Delete temporary files
 rm $dir/.html_anna* 2>/dev/null &
+rm $dir/temp.html* 2>/dev/null &
 rm $dir/.link_page_anna* 2>/dev/null &
 rm $dir/*.{pdf,fb2,doc,epub,rar,zip,djvu,txt} 2>/dev/null
 
@@ -193,27 +194,45 @@ echo -e $White''
 # Downloads directory  
 dirdownload=~/Documents
 
+if [[ -d $dirdownload ]]; 
+then
+echo ""
+else 
+	mkdir $dirdownload 
+fi
 
-readarray -t urls < $dir/.donwload_link
+readarray -t urls < "$dir/.donwload_link"
 
-for url in "${urls[@]}"
-do
+for url in "${urls[@]}"; do
     filename=$(basename "$url")
+    shortname=$(basename "$filename" | cut -c 1-50)
     extension=$(echo "$filename" | sed 's/.*\.//')
+    
     if [[ $filename =~ \.(pdf|epub|txt|zip|rar|djvu|fb2|mobi|doc|docx|fb2|cbz|rtf|azw3|azw|cbr)$ ]]; then
-        wget -nc -P "$dir/" "$url"
-        if [ $? -eq 0 ]; then
-            echo -e $BGreen'Download finished: '$dirdownload'/'$namedocument'.'$extension''
-            mv $dir/*."$extension" $dirdownload/
-           cd $dirdownload/ && mv $filename "$namedocument"."$extension"
-           
+        if wget -nc -P "$dir/" --read-timeout=10 "$url"; then
+            echo -e "$BGreen'Download finished: $dirdownload/$namedocument.$extension'"
+            mv "$dir"/*."$extension" "$dirdownload/"
+            cd "$dirdownload/" && mv *."$extension" "$shortname.$extension" && mv "$shortname.$extension" "$namedocument.$extension"
             break
+        else
+            echo "Failed to download: $url"  # Add a line to handle failed downloads
+        fi
+    elif [[ $url == *"/slow_download/"* ]]; then
+        curl -A "$agent" -o "$dir"/temp.html https://annas-archive.org"$url"
+        href_value=$(cat "$dir"/temp.html | sed -n '/<a .*class="font-bold".*>/ s/.*href="\([^"]*\)".*/\1/p')
+        filename2=$(basename "$href_value")
+        shortname2=$(basename "$filename2" | cut -c 1-50)
+        extension2=$(echo "$filename2" | sed 's/.*\.//')
+
+        if [[ $filename2 =~ \.(pdf|epub|txt|zip|rar|djvu|fb2|mobi|doc|docx|fb2|cbz|rtf|azw3|azw|cbr)$ ]]; then
+            if wget -nc -P "$dir/" --read-timeout=10 "$href_value"; then
+                echo -e "$BGreen'Download finished: $dirdownload/$namedocument.$extension2'"
+                mv "$dir"/*."$extension2" "$dirdownload/"
+                cd "$dirdownload/" && mv *."$extension2" "$shortname2.$extension2" 2>/dev/null && mv "$shortname2.$extension2" "$namedocument.$extension2"  2>/dev/null &
+                break
+            fi
         fi
     fi
 done
-else
-  echo -e $BRed'No option was selected.'
-  exit 1
-
+exit 1
 fi
-
