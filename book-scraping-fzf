@@ -3,10 +3,10 @@
 # Created by IamJony
 # My github: https://github.com/IamJony
 # DESCRIPTION: A Bash script to download books using libraries shadows
-# Date: 2023-10-11 
-# Version: 1.3
+# Date: 2024-29-01 
+# Version: 1.3.3
 
-version_number="1.3"
+version_number="1.3.2"
 
 # Local version
 version_info() {
@@ -78,9 +78,9 @@ rm $dir/*.{pdf,fb2,doc,epub,rar,zip,djvu,txt} 2>/dev/null
 # scraping anna site
 scraping_fast() {
 	
-	title_book=$(sed -n 's/.*<h3 class="truncate text-xl font-bold">\([^<]*\)<\/h3>.*/\1/p' $dir/.html_anna > $dir/.title_book_anna)
-	book_autor=$(sed -n 's/^.*<div class="truncate italic">\([^<]*\)<\/div>.*$/\1/p' $dir/.html_anna > $dir/.book_autor_anna)
-	format_book=$(sed -n 's/^.*<div class="truncate text-xs text-gray-500">\([^<]*MB\).*$/\1/p' $dir/.html_anna > $dir/.format_book_anna)
+	title_book=$(sed -n 's/.*<h3[^>]*class="[^"]*truncate[^"]*text-xl[^"]*font-bold"[^>]*>\(.*\)<\/h3>.*/\1/p' $dir/.html_anna > $dir/.title_book_anna)
+	book_autor=$(sed -n 's/.*<div[^>]*class="[^"]*truncate[^"]*italic"[^>]*>\(.*\)<\/div>.*/\1/p' $dir/.html_anna > $dir/.book_autor_anna)
+	format_book=$(sed -n 's/.*<div[^>]*class="[^"]*text-gray-500[^"]*">\([^<]*\)<\/div>.*/\1/p' $dir/.html_anna > $dir/.format_book_anna)
 	link_pag=$(sed -n 's/^.*<a[^>]*href="\([^"]*\)".*$/\1/p' $dir/.html_anna | sed -n '/md5/p' > $dir/.link_page_ana)
 	link_page=$(cat $dir/.link_page_ana | sed '/\/md5\/${item.md5}/d' > $dir/.link_page_anna)
 	md5=$(cat $dir/.link_page_anna)
@@ -162,34 +162,31 @@ OPTION=$(printf '%s\n' "${OPTIONS[@]}" | fzf | awk '{print $1}')
 
 # Validate the user's selection
 if [[ "$OPTION" =~ ^[0-9]+$ && "$OPTION" -ge 0 && "$OPTION" -lt "${#LINES[@]}" ]]; then
-  echo "==========="
+  echo ""
   namedocument=$(echo "$OPTION: ${LINES[$OPTION-1]}" | sed -n 's/^[^:]*: *\(.*[^ ]\) *|[^|]*|.*/\1/p' | sed 's/[^[:alnum:][:space:]]//g')
   echo -e $BGreen''
   echo "Ha seleccionado la opción $((OPTION)): ${LINES[$OPTION-1]}"
   echo -e $White''
+  
+  # get md5 of the book selected by the user
   ANOTHER_FILE_LINE=$(sed -n "$((OPTION))p" $dir/.link_page_anna)
-  curl https://annas-archive.org$ANOTHER_FILE_LINE | grep -oP '<li>.*?\K(?<=href=")[^"]*(?=")' > $dir/.donwload_link 
+  
+  # get downloads url
+  curl -s -A "$agent" "https://annas-archive.org$ANOTHER_FILE_LINE" | sed -n '/class="js-download-link"/p' | grep -o "href='[^']*'" | sed -e "s/href='\([^']*\)'/\1/" > "$dir/.download_link" || die "Failed get downloads url"
 
-libgenlink=$(cat $dir/.donwload_link | sed -n '/^http:\/\/libgen\.li/p')
-onionlink=$(cat $dir/.donwload_link | sed -n '/\.onion/p')
+
 
 # Downloads link dowsnt start automatically 
 echo -e ''
+
 echo -e $BYellow'If the download doesnt start automatically, you can open this link in your browser'
-echo -e $BRed''
-echo "$libgenlink"
-echo -e ''
-echo -e $BYellow'If the download doesnt start automatically, copy this command to download the book directly in the terminal'
-echo -e $BRed''
-comandoo=$(curl -s "$libgenlink" | sed -n 's/.*<a href="get.php\([^"]*\)".*/http:\/\/libgen.li\/get.php\1/p' 2>/dev/null)
-echo -e "wget \"$comandoo\""
 
+cat $dir/.download_link | grep /slow | sed 's|^|https://annas-archive.org|' 2>/dev/null &
+cat $dir/.download_link | grep ht 2>/dev/null &
+cat $dir/.download_link | sed -n '/\.onion/p' 2>/dev/null &
 
-echo -e ''
-echo -e $BYellow'Onion link'
-echo -e $BRed''
-echo "$onionlink"
 echo -e $White''
+echo ""
 
 # Downloads directory  
 dirdownload=~/Documents
@@ -201,7 +198,7 @@ else
 	mkdir $dirdownload 
 fi
 
-readarray -t urls < "$dir/.donwload_link"
+readarray -t urls < "$dir/.download_link"
 
 for url in "${urls[@]}"; do
     filename=$(basename "$url")
@@ -215,23 +212,54 @@ for url in "${urls[@]}"; do
             cd "$dirdownload/" && mv *."$extension" "$shortname.$extension" && mv "$shortname.$extension" "$namedocument.$extension"
             break
         else
-            echo "Failed to download: $url"  # Add a line to handle failed downloads
+            echo "Failed to download: $url"  
         fi
-    elif [[ $url == *"/slow_download/"* ]]; then
-        curl -A "$agent" -o "$dir"/temp.html https://annas-archive.org"$url"
-        href_value=$(cat "$dir"/temp.html | sed -n '/<a .*class="font-bold".*>/ s/.*href="\([^"]*\)".*/\1/p')
-        filename2=$(basename "$href_value")
-        shortname2=$(basename "$filename2" | cut -c 1-50)
-        extension2=$(echo "$filename2" | sed 's/.*\.//')
+     
+     elif [[ $url == *1lib.sk* ]]; then
+     echo ""
+     echo ""
+     onelib=$(wget -U "$agent" --load-cookies ./1lib.sk-cookies.txt $url -O $dir/1lib.html)
+     dw=$(sed -n 's/.*<a class="[^"]*DownloadedBook[^"]*" href="\([^"]*\)".*/\1/p' $dir/1lib.html)
 
-        if [[ $filename2 =~ \.(pdf|epub|txt|zip|rar|djvu|fb2|mobi|doc|docx|fb2|cbz|rtf|azw3|azw|cbr)$ ]]; then
-            if wget -nc -P "$dir/" --read-timeout=10 "$href_value"; then
-                echo -e "$BGreen'Download finished: $dirdownload/$namedocument.$extension2'"
-                mv "$dir"/*."$extension2" "$dirdownload/"
-                cd "$dirdownload/" && mv *."$extension2" "$shortname2.$extension2" 2>/dev/null && mv "$shortname2.$extension2" "$namedocument.$extension2"  2>/dev/null &
-                break
-            fi
-        fi
+if [ -z "$dw" ] || [ -z "$onelib" ]; then
+    echo -e "$BRed Error in 1lib.sk. The link could not be extracted to start the automatic download.."
+    break
+fi
+    
+    wget -U "$agent" --load-cookies 1lib.sk-cookies.txt https://1lib.sk"$dw" -P "$dirdownload"
+   
+     break
+       
+     elif [[ $url == http://libgen.li* ]]; then
+     libgenlink=$(cat $dir/.download_link | sed -n '/^http:\/\/libgen\.li/p')
+	 comandoo=$(curl -A "$agent" -s "$url" | sed -n 's/.*<a[^>]*href="\([^"]*get\.php[^"]*\)".*/\1/p')
+	 
+	 if [ -z "$comandoo" ]; then
+    echo -e $BRed'Error in libgenlink The link could not be extracted to start the automatic download.'
+    break
+fi
+	 
+	 echo -e $BRed'The download will begin in your browser'
+	 xdg-open "$comandoo"
+			break
+			
+			
+
+#    elif [[ $url == *"/slow_download/"* ]]; then
+#        curl -A "$agent" -o "$dir"/temp.html https://annas-archive.org"$url"
+#        href_value=$(cat "$dir"/temp.html | sed -n '/<a .*class="font-bold".*>/ s/.*href="\([^"]*\)".*/\1/p')
+#        filename2=$(basename "$href_value")
+#        shortname2=$(basename "$filename2" | cut -c 1-50)
+#        extension2=$(echo "$filename2" | sed 's/.*\.//')
+
+#        if [[ $filename2 =~ \.(pdf|epub|txt|zip|rar|djvu|fb2|mobi|doc|docx|fb2|cbz|rtf|azw3|azw|cbr)$ ]]; then
+#            if wget -nc -P "$dir/" --read-timeout=10 "$href_value"; then
+#                echo -e "$BGreen'Download finished: $dirdownload/$namedocument.$extension2'"
+#                mv "$dir"/*."$extension2" "$dirdownload/"
+#                cd "$dirdownload/" && mv *."$extension2" "$shortname2.$extension2" 2>/dev/null && mv "$shortname2.$extension2" "$namedocument.$extension2"  2>/dev/null &
+#                break
+#            fi
+#        fi
     fi
 done
 exit 1
