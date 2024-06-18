@@ -3,10 +3,10 @@
 # Created by IamJony
 # My github: https://github.com/IamJony
 # DESCRIPTION: A Bash script to download books using libraries shadows
-# Date: 2024-29-01 
-# Version: 1.3.3
+# Date: 2024-18-06 
+# Version: 1.3.3 &sort=&lang=es
 
-version_number="1.3.2"
+version_number="1.3.3"
 
 # Local version
 version_info() {
@@ -36,9 +36,10 @@ update_script() {
     exit 0
 }
 
-# Shadown Libraries url
-anna='https://annas-archive.org/search?q='
-pdfdrive='https://es.pdfdrive.com/search?q='
+
+ anna='https://annas-archive.org/search?q='
+
+
 
 
 # Agent
@@ -114,20 +115,34 @@ done
 # User input
 
 user() {
-	echo -e $BYellow''
-	read -p "Enter the name of the book to search: " input &&
-	input=${input// /+}
-	curl "$anna""$input" >> $dir/.html_anna
-	scraping_fast > $dir/result
-	echo -e $White''
+    echo -e $BYellow''
+    read -p "Enter the name of the book to search: " input &&
+    input=${input// /+}
+    curl "${anna}${input}${parametros}" >> $dir/.html_anna
+    scraping_fast > $dir/result
+    echo -e $White''
 }
+
 
 if  [[ $1 = "--version" ]]; then
 	version_info;
 elif [[ $1 = "--update" ]]; then
 update_script;
-else
-user;
+elif [[ $1 = "--es" ]]; then
+    parametros="&sort=&lang=es"
+    user
+    elif [[  $1 = "--en" ]]; then
+    parametros="&sort=&lang=en"
+    user
+    elif [[  $1 = "--pdf" ]]; then    
+        parametros="&ext=pdf"
+        user
+     elif [[  $1 = "--epub" ]]; then
+     parametros="&ext=epub"
+     user
+    else
+        parametros=""
+       user;
 fi
 	
 # FZF
@@ -215,20 +230,20 @@ for url in "${urls[@]}"; do
             echo "Failed to download: $url"  
         fi
      
-     elif [[ $url == *1lib.sk* ]]; then
-     echo ""
-     echo ""
-     onelib=$(wget -U "$agent" --load-cookies ./1lib.sk-cookies.txt $url -O $dir/1lib.html)
-     dw=$(sed -n 's/.*<a class="[^"]*DownloadedBook[^"]*" href="\([^"]*\)".*/\1/p' $dir/1lib.html)
+ #    elif [[ $url == *1lib.sk* ]]; then
+  #   echo ""
+    # echo ""
+    # onelib=$(wget -U "$agent" --load-cookies ./1lib.sk-cookies.txt $url -O $dir/1lib.html)
+     #dw=$(sed -n 's/.*<a class="[^"]*DownloadedBook[^"]*" href="\([^"]*\)".*/\1/p' $dir/1lib.html)
 
-if [ -z "$dw" ] || [ -z "$onelib" ]; then
-    echo -e "$BRed Error in 1lib.sk. The link could not be extracted to start the automatic download.."
-    break
-fi
+#if [ -z "$dw" ] || [ -z "$onelib" ]; then
+  #  echo -e "$BRed Error in 1lib.sk. The link could not be extracted to start the automatic download.."
+   # break
+#fi
     
-    wget -U "$agent" --load-cookies 1lib.sk-cookies.txt https://1lib.sk"$dw" -P "$dirdownload"
+  #  wget -U "$agent" --load-cookies 1lib.sk-cookies.txt https://1lib.sk"$dw" -P "$dirdownload"
    
-     break
+    # break
        
      elif [[ $url == http://libgen.li* ]]; then
      libgenlink=$(cat $dir/.download_link | sed -n '/^http:\/\/libgen\.li/p')
@@ -239,27 +254,20 @@ fi
     break
 fi
 	 
-	 echo -e $BRed'The download will begin in your browser'
-	 xdg-open "$comandoo"
-			break
+	 echo ""
+	 echo  -e $BYellow'An attempt is being made to download automatically.'
+	 echo -e $White''
+	
+	 wget  -P "$dirdownload" --user-agent="$agent" --content-disposition --max-redirect=30 "https://libgen.li/""$comandoo"
+	 
+	 if [ $? -ne 0 ]; then
+    echo -e $BRed 'Error could not be downloaded automatically'
+    exit 1
+    else
+    break
+fi
 			
 			
-
-#    elif [[ $url == *"/slow_download/"* ]]; then
-#        curl -A "$agent" -o "$dir"/temp.html https://annas-archive.org"$url"
-#        href_value=$(cat "$dir"/temp.html | sed -n '/<a .*class="font-bold".*>/ s/.*href="\([^"]*\)".*/\1/p')
-#        filename2=$(basename "$href_value")
-#        shortname2=$(basename "$filename2" | cut -c 1-50)
-#        extension2=$(echo "$filename2" | sed 's/.*\.//')
-
-#        if [[ $filename2 =~ \.(pdf|epub|txt|zip|rar|djvu|fb2|mobi|doc|docx|fb2|cbz|rtf|azw3|azw|cbr)$ ]]; then
-#            if wget -nc -P "$dir/" --read-timeout=10 "$href_value"; then
-#                echo -e "$BGreen'Download finished: $dirdownload/$namedocument.$extension2'"
-#                mv "$dir"/*."$extension2" "$dirdownload/"
-#                cd "$dirdownload/" && mv *."$extension2" "$shortname2.$extension2" 2>/dev/null && mv "$shortname2.$extension2" "$namedocument.$extension2"  2>/dev/null &
-#                break
-#            fi
-#        fi
     fi
 done
 exit 1
