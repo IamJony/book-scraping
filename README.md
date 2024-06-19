@@ -12,7 +12,9 @@ The script downloads Anna's page and through the use of regular expressions, man
 
 ## Parametros
 ./book-scraping-fzf --pdf
+
 ./book-scraping-fzf --epub
+
 ./book-scraping-fzf --help
 
 ## Example:
