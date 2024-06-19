@@ -10,10 +10,10 @@ The script downloads Anna's page and through the use of regular expressions, man
 ## Update script 
 ./book-scraping-fzf --update
 
-## Parametros
-./book-scraping-fzf --pdf
+## Parameters
+./book-scraping-fzf --pdf ***search pdf***
 
-./book-scraping-fzf --epub
+./book-scraping-fzf --epub ***search epub***
 
 ./book-scraping-fzf --help
 
