@@ -8,12 +8,16 @@ A Bash script to search and download books using shadows libraries
 The script downloads Anna's page and through the use of regular expressions, manages to extract information from the books and in turn extracts the URLs from the different download servers
 
 ## Update script 
-./book-scraping-fzf --update
+`book-scraping-fzf --update`
 
 ## Parameters
-`book-scraping-fzf --pdf` ***search pdf***
+`book-scraping-fzf --pdf`
 
-`book-scraping-fzf --epub` ***search epub***
+`book-scraping-fzf --epub`
+
+`book-scraping-fzf --es`
+
+`book-scraping-fzf --en`
 
 
 
