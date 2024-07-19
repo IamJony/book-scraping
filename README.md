@@ -11,11 +11,11 @@ The script downloads Anna's page and through the use of regular expressions, man
 ./book-scraping-fzf --update
 
 ## Parameters
-./book-scraping-fzf --pdf ***search pdf***
+`book-scraping-fzf --pdf` ***search pdf***
 
-./book-scraping-fzf --epub ***search epub***
+`book-scraping-fzf --epub` ***search epub***
 
-./book-scraping-fzf --help
+
 
 ## Example:
 ![ecampl](https://raw.githubusercontent.com/IamJony/semi-nord-theme-bluefish/main/Screenshot_2023-05-09-03-06-23_1366x768.png)
