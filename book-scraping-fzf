@@ -3,10 +3,10 @@
 # Created by IamJony
 # My github: https://github.com/IamJony
 # DESCRIPTION: A Bash script to download books using libraries shadows
-# Date: 2024-18-06 
-# Version: 1.3.3 &sort=&lang=es
+# Date: 2024-18-07 
+# Version: 1.3.3-1 &sort=&lang=es
 
-version_number="1.3.3"
+version_number="1.3.3-1"
 
 # Local version
 version_info() {
@@ -245,12 +245,12 @@ for url in "${urls[@]}"; do
    
     # break
        
-     elif [[ $url == http://libgen.li* ]]; then
-     libgenlink=$(cat $dir/.download_link | sed -n '/^http:\/\/libgen\.li/p')
-	 comandoo=$(curl -A "$agent" -s "$url" | sed -n 's/.*<a[^>]*href="\([^"]*get\.php[^"]*\)".*/\1/p')
+     elif [[ $url == *libgen.li* ]]; then
+     libgenlink=$(cat $dir/.download_link | sed -n '/^http*:\/\/libgen\.[^\/]*/p')
+	 comandoo=$(wget --user-agent "$agent" -q -O - "$url" | sed -n 's/.*<a[^>]*href="\([^"]*get\.php[^"]*\)".*/\1/p')
 	 
 	 if [ -z "$comandoo" ]; then
-    echo -e $BRed'Error in libgenlink The link could not be extracted to start the automatic download.'
+    echo -e $BRed' 1 Error in libgenlink The link could not be extracted to start the automatic download.'
     break
 fi
 	 
@@ -258,7 +258,7 @@ fi
 	 echo  -e $BYellow'An attempt is being made to download automatically.'
 	 echo -e $White''
 	
-	 wget  -P "$dirdownload" --user-agent="$agent" --content-disposition --max-redirect=30 "https://libgen.li/""$comandoo"
+	 wget  -P "$dirdownload" --user-agent "$agent" --content-disposition --max-redirect=30 "https://libgen.li/""$comandoo"
 	 
 	 if [ $? -ne 0 ]; then
     echo -e $BRed 'Error could not be downloaded automatically'
