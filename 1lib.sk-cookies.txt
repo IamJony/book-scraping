@@ -1,9 +1,0 @@
-# HTTP Cookie File for domains related to 1lib.sk.
-# Mahel account for zlibrary
-# Downloaded with cookies.txt One Click Firefox Extension (https://addons.mozilla.org/en-US/firefox/addon/cookies-txt-one-click/)
-# Example:  wget -x --load-cookies cookies.txt https://es.1lib.sk/book/5446734/afefce?signAll=1&amp;ts=2225
-#
-.1lib.sk	TRUE	/	TRUE	1710157597	remix_userkey	c345e7d0a03c9553127ae9d3fbb4ad58
-.1lib.sk	TRUE	/	TRUE	1710157597	remix_userid	36822679
-.1lib.sk	TRUE	/	TRUE	1706557607	redirects_count	%7B%22hideAuthParams%22%3A1%7D
-.1lib.sk	TRUE	/	TRUE	1722368797	siteLanguage	es
