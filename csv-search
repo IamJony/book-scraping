@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# File containing the book information
+csv_file="books.csv"
+
+# Check if the CSV file exists
+if [ ! -f "$csv_file" ]; then
+    echo "Error: The CSV file '$csv_file' does not exist."
+    exit 1
+fi
+
+# Read the CSV file line by line
+while IFS=, read -r title author format language; do
+    # Skip the header line
+    if [ "$title" != "title" ]; then
+        command="echo \"$title\" | ./book-scraping-fzf"
+
+        if [ -n "$author" ]; then
+            command="$command --author \"$author\""
+        fi
+
+        if [ -n "$format" ]; then
+            command="$command --$format"
+        fi
+        
+        if [ -n "$language" ]; then
+            command="$command --$language"
+        fi
+
+        echo "Search: $title"
+        
+        eval "$command"
+    fi
+done < "$csv_file"
+
+echo "Search completed for all books."
+
