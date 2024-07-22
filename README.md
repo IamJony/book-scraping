@@ -16,8 +16,10 @@ Parameters can be combined to refer to a list of parameters '--help' or '-h'
 
 Prioritize book searches on libgen (**Automatic download support**)
 `book-scraping-fzf --lib`
+
 Search pdf in spanish
 `book-scraping-fzf --pdf --es` 
+
 Search epub in all lenguaje 
 `book-scraping-fzf --epub`
 
