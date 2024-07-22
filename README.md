@@ -15,15 +15,15 @@ The script downloads Anna's page and through the use of regular expressions, man
 Parameters can be combined to refer to a list of parameters `--help` or `-h`.
 
 
-Prioritize book searches on libgen (**Automatic download support**)
+#### Prioritize book searches on libgen (**Automatic download support**)
 
 `book-scraping-fzf --lib`
 
-Search pdf in spanish
+#### Search pdf in spanish
 
 `book-scraping-fzf --pdf --es` 
 
-Search epub in all lenguaje 
+#### Search epub in all lenguaje 
 
 `book-scraping-fzf --epub`
 
