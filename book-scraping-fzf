@@ -3,8 +3,8 @@
 # Created by IamJony
 # My github: https://github.com/IamJony
 # DESCRIPTION: A Bash script to download books using libraries shadows
-# Date: 2024-18-07 
-# Version: 1.3.3-1 &sort=&lang=es
+# Date: 2024-21-07 
+# Version: 1.3.3-1 
 
 version_number="1.3.3-1"
 
@@ -42,8 +42,14 @@ update_script() {
 
 
 
-# Agent
-agent="Mozilla/5.0 (Windows NT 6.1; Win64; rv:109.0) Gecko/20100101 Firefox/109.0"
+# User Agent Random
+numRandom=$((RANDOM % 59))
+agent=$(jq --raw-output ".[${numRandom}]" user-agent.json 2>/dev/null)
+
+if [[ -z "$agent" ]]; then
+    agent="Mozilla/5.0 (Windows NT 6.1; Win64; rv:109.0) Gecko/20100101 Firefox/109.0"
+fi
+
 
 
 # Set color
@@ -115,36 +121,65 @@ done
 # User input
 
 user() {
+
+    echo "$parametros"
     echo -e $BYellow''
     read -p "Enter the name of the book to search: " input &&
     input=${input// /+}
-    curl "${anna}${input}${parametros}" >> $dir/.html_anna
+    wget --user-agent "$agent" -O $dir/.html_anna -q "${anna}${input}${parametros}"
     scraping_fast > $dir/result
     echo -e $White''
 }
 
 
-if  [[ $1 = "--version" ]]; then
-	version_info;
-elif [[ $1 = "--update" ]]; then
-update_script;
-elif [[ $1 = "--es" ]]; then
-    parametros="&sort=&lang=es"
-    user
-    elif [[  $1 = "--en" ]]; then
-    parametros="&sort=&lang=en"
-    user
-    elif [[  $1 = "--pdf" ]]; then    
-        parametros="&ext=pdf"
-        user
-     elif [[  $1 = "--epub" ]]; then
-     parametros="&ext=epub"
-     user
-    else
-        parametros=""
-       user;
-fi
-	
+parametros=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --version)
+            version_info
+            ;;
+        --update)
+            update_script
+            ;;
+        --help | -h)
+	    cat <<- _EOF_
+	Available options:
+	  --update   	--lib
+	  --es          --external_download
+	  --en          --epub
+	  --pdf        
+	_EOF_
+	   exit 0
+	    ;;
+	--external_download)
+	    parametros="${parametros}&acc=external_download"
+            ;;
+	--lib)
+	    parametros="${parametros}&src=lgli"
+            ;;
+        --es)
+            parametros="${parametros}&sort=&lang=es"
+            ;;
+        --en)
+            parametros="${parametros}&sort=&lang=en"
+            ;;
+        --pdf)
+            parametros="${parametros}&ext=pdf"
+            ;;
+        --epub)
+            parametros="${parametros}&ext=epub"
+            ;;
+        *)
+            echo "Opción no reconocida: $1"
+            ;;
+    esac
+    shift
+done
+
+user
+
+
 # FZF
 export FZF_DEFAULT_OPTS="--bind='ctrl-x:execute(exit 0)+abort'"
 	
@@ -230,20 +265,6 @@ for url in "${urls[@]}"; do
             echo "Failed to download: $url"  
         fi
      
- #    elif [[ $url == *1lib.sk* ]]; then
-  #   echo ""
-    # echo ""
-    # onelib=$(wget -U "$agent" --load-cookies ./1lib.sk-cookies.txt $url -O $dir/1lib.html)
-     #dw=$(sed -n 's/.*<a class="[^"]*DownloadedBook[^"]*" href="\([^"]*\)".*/\1/p' $dir/1lib.html)
-
-#if [ -z "$dw" ] || [ -z "$onelib" ]; then
-  #  echo -e "$BRed Error in 1lib.sk. The link could not be extracted to start the automatic download.."
-   # break
-#fi
-    
-  #  wget -U "$agent" --load-cookies 1lib.sk-cookies.txt https://1lib.sk"$dw" -P "$dirdownload"
-   
-    # break
        
      elif [[ $url == *libgen.li* ]]; then
      libgenlink=$(cat $dir/.download_link | sed -n '/^http*:\/\/libgen\.[^\/]*/p')
