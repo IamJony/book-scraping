@@ -142,20 +142,26 @@ while [[ $# -gt 0 ]]; do
             update_script
             ;;
         --help | -h)
-	    cat <<- _EOF_
-	Available options:
-	  --update   	--lib
-	  --es          --external_download
-	  --en          --epub
-	  --pdf        
-	_EOF_
-	   exit 0
-	    ;;
-	--external_download)
-	    parametros="${parametros}&acc=external_download"
+            cat <<- _EOF_
+Available options:
+  --version         Show version information
+  --update          Update the script
+  --help, -h        Show this help message
+  --external_download  Download external resources
+  --lib             Prioritize book searches on libgen 
+  --es              Search in Spanish
+  --en              Search in English
+  --pdf             Search for PDF files
+  --epub            Search for EPUB files
+  --author           Specify the author
+_EOF_
+            exit 0
             ;;
-	--lib)
-	    parametros="${parametros}&src=lgli"
+        --external_download)
+            parametros="${parametros}&acc=external_download"
+            ;;
+        --lib)
+            parametros="${parametros}&src=lgli"
             ;;
         --es)
             parametros="${parametros}&sort=&lang=es"
@@ -169,8 +175,18 @@ while [[ $# -gt 0 ]]; do
         --epub)
             parametros="${parametros}&ext=epub"
             ;;
+        --author)
+            if [[ -n "$2" && "$2" != --* ]]; then
+                autor=$(echo "$2" | sed 's/ /+/g')
+                parametros="${parametros}&termtype_1=author&termval_1=${autor}"
+                shift
+            else
+                echo "Error: A value for --author was expected"
+                exit 1
+            fi
+            ;;
         *)
-            echo "Opción no reconocida: $1"
+            echo "Optión no found: $1"
             ;;
     esac
     shift
