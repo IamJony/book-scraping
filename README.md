@@ -20,6 +20,7 @@ Parameters can be combined to refer to a list of parameters `--help` or `-h`.
 By default, book-scraping-fzf prompts the user for the book name to search. However, you can perform a direct search by passing the argument using echo.
 
 To bypass the interactive prompt and provide the book name directly from the command line, you can use redirection as follows: 
+
 `echo "linux" | book-scraping-fzf --en --pdf --lib`
 
 
