@@ -23,7 +23,7 @@ Parameters can be combined to refer to a list of parameters `--help` or `-h`.
 
 `book-scraping-fzf --pdf --es` 
 
-#### Search epub in all lenguaje 
+#### Search epub
 
 `book-scraping-fzf --epub`
 
