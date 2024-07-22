@@ -12,7 +12,8 @@ The script downloads Anna's page and through the use of regular expressions, man
 `book-scraping-fzf --update`
 
 ## Parameters
-Parameters can be combined to refer to a list of parameters `--help` or `-h`
+Parameters can be combined to refer to a list of parameters `--help` or `-h`.
+
 
 Prioritize book searches on libgen (**Automatic download support**)
 
