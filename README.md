@@ -4,6 +4,7 @@ A Bash script to search and download books using shadows libraries
 1. fzf
 2. wget
 3. curl
+4. jq
 ## How it works 
 The script downloads Anna's page and through the use of regular expressions, manages to extract information from the books and in turn extracts the URLs from the different download servers
 
@@ -11,13 +12,14 @@ The script downloads Anna's page and through the use of regular expressions, man
 `book-scraping-fzf --update`
 
 ## Parameters
-`book-scraping-fzf --pdf`
+Parameters can be combined to refer to a list of parameters '--help' or '-h'
 
+Prioritize book searches on libgen (**Automatic download support**)
+`book-scraping-fzf --lib`
+Search pdf in spanish
+`book-scraping-fzf --pdf --es` 
+Search epub in all lenguaje 
 `book-scraping-fzf --epub`
-
-`book-scraping-fzf --es`
-
-`book-scraping-fzf --en`
 
 
 
