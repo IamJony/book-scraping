@@ -122,7 +122,6 @@ done
 
 user() {
 
-    echo "$parametros"
     echo -e $BYellow''
     read -p "Enter the name of the book to search: " input &&
     input=${input// /+}
