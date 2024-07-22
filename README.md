@@ -21,7 +21,7 @@ By default, book-scraping-fzf prompts the user for the book name to search. Howe
 
 To bypass the interactive prompt and provide the book name directly from the command line, you can use redirection as follows: 
 
-`echo "linux" | book-scraping-fzf --en --pdf --lib`
+`echo "linux" | ./book-scraping-fzf --en --pdf --lib`
 
 
 #### Prioritize book searches on libgen (**Automatic download support**)
