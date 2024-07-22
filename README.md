@@ -21,6 +21,9 @@ Parameters can be combined to refer to a list of parameters `--help` or `-h`.
 
 `book-scraping-fzf --lib`
 
+#### Search by author
+`./book-scraping-fzf --en --author "gabriel garcia"`
+
 #### Search pdf in spanish
 
 `book-scraping-fzf --pdf --es` 
