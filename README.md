@@ -40,7 +40,7 @@ To bypass the interactive prompt and provide the book name directly from the com
 `book-scraping-fzf --epub`
 
 #### Search multiple books
-To search for multiple books using `csv-search` script, first, edit the `books.csv` file in a text editor or spreadsheet application to make any necessary changes, such as adding, removing, or adjusting book information. After saving the file, run the csv-search command in your terminal or command lin
+To search for multiple books using `csv-search` script, first, edit the `books.csv` file in a text editor or spreadsheet application to make any necessary changes, such as adding, removing, or adjusting book information. After saving the file, run the `csv-search` command in your terminal or command lin
 
 
 
