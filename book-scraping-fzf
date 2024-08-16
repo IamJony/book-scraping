@@ -3,7 +3,7 @@
 # Created by IamJony
 # My github: https://github.com/IamJony
 # DESCRIPTION: A Bash script to download books using libraries shadows
-# Date: 2024-21-07 
+# Date: 2024-15-08 
 # Version: 1.3.3-1 
 
 version_number="1.3.3-1"
@@ -74,13 +74,9 @@ BWhite='\e[1;37m'       # White
 
 # Directory
 dir="$HOME/.bookScraping"
+rm -dfr $dir 2>/dev/null &
 mkdir $dir/ 2>/dev/null &
 
-# Delete temporary files
-rm $dir/.html_anna* 2>/dev/null &
-rm $dir/temp.html* 2>/dev/null &
-rm $dir/.link_page_anna* 2>/dev/null &
-rm $dir/*.{pdf,fb2,doc,epub,rar,zip,djvu,txt} 2>/dev/null
 
 # scraping anna site
 scraping_fast() {
@@ -249,9 +245,16 @@ if [[ "$OPTION" =~ ^[0-9]+$ && "$OPTION" -ge 0 && "$OPTION" -lt "${#LINES[@]}" ]
   ANOTHER_FILE_LINE=$(sed -n "$((OPTION))p" $dir/.link_page_anna)
   
   # get downloads url
-  curl -s -A "$agent" "https://annas-archive.org$ANOTHER_FILE_LINE" | sed -n '/class="js-download-link"/p' | grep -o "href='[^']*'" | sed -e "s/href='\([^']*\)'/\1/" > "$dir/.download_link" || die "Failed get downloads url"
+  
+ curl -s -A "$agent" "https://annas-archive.org$ANOTHER_FILE_LINE" \
+    | sed -n '/class="js-download-link"/p' \
+    | grep -o "href='[^']*'" \
+    | sed -e "s/href='\([^']*\)'/\1/" > "$dir/.download_link"
 
-
+if [[ ! -s "$dir/.download_link" ]]; then
+echo -e $BRed 'Failed to get download link'
+exit 1
+ fi
 
 # Downloads link dowsnt start automatically 
 echo -e ''
