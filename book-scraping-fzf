@@ -126,6 +126,18 @@ user() {
     read -p "Enter the name of the book to search: " input &&
     input=${input// /+}
     wget --user-agent "$agent" -O $dir/.html_anna -q "${anna}${input}${parametros}"
+
+    # Fail
+    if [ $? -ne 0 ]; then
+    	echo -e "${Red}The command failed." 
+    	echo ""
+    	echo "wget --user-agent \"$agent\" \"${anna}${input}${parametros}\""
+    	echo ""
+    	http_status=$(wget --spider --server-response --user-agent "$agent" "${anna}${input}${parametros}" | 2>&1)
+    	echo "$http_status"
+    	exit 1
+    fi
+
     scraping_fast > $dir/result
     echo -e $White''
 }
