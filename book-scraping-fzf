@@ -208,7 +208,7 @@ export FZF_DEFAULT_OPTS="--bind='ctrl-x:execute(exit 0)+abort'"
 	
 
 if [ ! -s $dir/.title_book_anna ]; then
-  echo -e $BRed'no found'
+  echo -e $BRed'No results found'
   sleep 2
   clear
   exit 1
